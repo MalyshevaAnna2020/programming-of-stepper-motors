@@ -53,8 +53,10 @@ void setup() {
 }
 
 void loop() {
-  // 
-  int t = target;
+  // t = target / 2 => acceleration & deceleration
+  int t = (int) (target / 2);
+  
+  // or t = n / 80 000 => acceleration & horizontal line & deceleration
   if (target > 2250) t = 1125;
 
   for (int i = 0; i < t; i++) acceleration();
