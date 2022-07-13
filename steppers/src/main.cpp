@@ -13,56 +13,62 @@ int present = 0; // Текущий шаг
 int count = 0; // Для повтора пути
 int mode = 0; // 0 - наверх, 1 - вниз
 
-long long n = 90000000;
+
+// t = target / 2 => acceleration & deceleration
+int t = (int) (target / 2);
+
+long long n = 300000;
 
 void acceleration()
 {
   digitalWrite(STEP_1, HIGH);
   digitalWrite(STEP_2, HIGH);
-  delay(80000);
+  delayMicroseconds(2000);
   digitalWrite(STEP_1, LOW);
   digitalWrite(STEP_2, LOW);
-  delayMicroseconds(n);
-  n -= 80000;
+  delay(n);
+  n -= 2000;
 }
 
 void deceleration()
 {
   digitalWrite(STEP_1, HIGH);
   digitalWrite(STEP_2, HIGH);
-  delayMicroseconds(80000);
+  delayMicroseconds(2000);
   digitalWrite(STEP_1, LOW);
   digitalWrite(STEP_2, LOW);
-  delayMicroseconds(n);
-  n += 80000;
+  delay(n);
+  n += 2000;
 }
 
 void constant_speed()
 {
   digitalWrite(STEP_1, HIGH);
   digitalWrite(STEP_2, HIGH);
-  delayMicroseconds(80000);
+  delayMicroseconds(2000);
   digitalWrite(STEP_1, LOW);
   digitalWrite(STEP_2, LOW);
-  delayMicroseconds(80000);
+  delayMicroseconds(2000);
 }
 
 void setup() {
   pinMode(STEP_1, OUTPUT);
   pinMode(STEP_2, OUTPUT);
+
+  // or t = n / 2 000 => acceleration & horizontal line & deceleration
+  if (target > 100) t = 50;
 }
 
 void loop() {
-  // t = target / 2 => acceleration & deceleration
-  int t = (int) (target / 2);
-  
-  // or t = n / 80 000 => acceleration & horizontal line & deceleration
-  if (target > 2250) t = 1125;
+  if (count < t)
+  {
+    acceleration();
+  }
+  else 
+  {
+    if (count > target - t) deceleration();
+    else constant_speed();
+  }
 
-  for (int i = 0; i < t; i++) acceleration();
-
-  int const_time = target - 2*t;
-  for (int i = 0; i < const_time; i++) constant_speed();
-
-  for (int i = 0; i < t; i++) deceleration();
+  count++;
 }
